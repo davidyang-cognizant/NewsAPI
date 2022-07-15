@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    >
+    <TextView
+        android:id="@+id/dialog_title"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:textSize="24sp"
+        android:background="#f54242"
+        android:gravity="center"
+        android:text="News" />
+    <TextView
+        android:id="@+id/dialog_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="200dp"
+        android:textSize="18sp"
+        android:background="#f5e4e4"
+        android:padding="4dp"
+        />
+    <TextView
+        android:id="@+id/dialog_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:background="#f54242"
+        android:padding="4dp"
+        android:text="News News News NewS News asd asd asd as das d sad as" />
+</LinearLayout>
