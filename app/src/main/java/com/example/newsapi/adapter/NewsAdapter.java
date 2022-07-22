@@ -50,7 +50,8 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
     @Override
     public NewsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         // Holds only a reference to the list item view (from which we can later find child views)
-        View adapterLayout = LayoutInflater.from(context).inflate(R.layout.list_item, parent, false);
+        // For a normal recycler view not being inflated from a DB query, change parent.getContext() to context.
+        View adapterLayout = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item, parent, false);
         return new NewsViewHolder(adapterLayout);
     }
 
@@ -66,7 +67,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
         holder.newsTitle.setText(dataset.get(position).getTitle());
         holder.newsAuthor.setText(dataset.get(position).getAuthor());
         new DownloadImageTask((ImageView) holder.newsImage)
-                .execute(dataset.get(position).getUrlToTimage());
+                .execute(dataset.get(position).getUrlToImage());
         holder.newsImage.setOnClickListener(new View.OnClickListener(){
             @SuppressLint("InflateParams")
             @Override

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Aplicación de noticias
-</string>
+    <string name="app_name">Aplicación de noticias</string>
+    <string name="news">Noticias</string>
+    <string name="filter">Filtrar por título: </string>
+    <string name="search">OK</string>
+
 </resources>

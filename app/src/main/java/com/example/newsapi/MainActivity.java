@@ -8,11 +8,15 @@ import androidx.loader.content.Loader;
 import androidx.recyclerview.widget.RecyclerView;
 
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.newsapi.adapter.NewsAdapter;
 import com.example.newsapi.model.NewsArticle;
@@ -21,7 +25,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -32,6 +39,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     private List<NewsArticle> newsArticleList;
     private RecyclerView recyclerView;
+    private NewsArticleDatabase db;
+    private EditText filter_et;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +48,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         setContentView(R.layout.activity_main);
         newsArticleList = new ArrayList<NewsArticle>();
         recyclerView = findViewById(R.id.recyclerView);
+        filter_et = findViewById(R.id.filter_et);
+
+        // Initialize database
+        db = NewsArticleDatabase.getInstance(getApplicationContext());
+
+        // **Be careful! This nuke method removes the table in Rooms Database**
+        db.articleDao().nuke();
+
         if (getSupportLoaderManager().getLoader(0) != null) {
             getSupportLoaderManager().initLoader(0, null, this);
         }
@@ -108,6 +125,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 String description = "";
                 String urlToImage = "";
                 String publishedAt = "";
+
                 // All of these are necessary for checking is a key is available
                 if (article.has("author")) {
                     author = article.get("author").toString();
@@ -122,25 +140,85 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     urlToImage = article.get("urlToImage").toString();
                 }
                 if (article.has("publishedAt")) {
-                    publishedAt = article.get("publishedAt").toString();
+                    String time = article.get("publishedAt").toString().substring(0, article.get("publishedAt").toString().indexOf('T'));
+//                    SimpleDateFormat prevFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+//                    SimpleDateFormat newFormat = new SimpleDateFormat("yyyy-MM-dd");
+//                    Date date = prevFormat.parse(article.get("publishedAt").toString());
+//                    assert date != null;
+                    publishedAt = time;
                 }
+
+                // Instantiate an object
+                NewsArticle newsArticle = new NewsArticle(author, title, description, urlToImage, publishedAt);
+
+                // Insert article into the database
+                db.articleDao().insertArticle(newsArticle);
+
                 // Add a new article into the array list.
-                newsArticleList.add(new NewsArticle(author, title, description, urlToImage, publishedAt));
+//                newsArticleList.add(newsArticle); // Old way of adding to recycler view
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
         // If the array is not empty, set the adapter to the recycler view with data
-        if (!newsArticleList.isEmpty()) {
-            Log.d("Outputs", "Setting recycler view");
-            recyclerView.setAdapter(new NewsAdapter(this, newsArticleList));
-            recyclerView.setHasFixedSize(true);
-        }
 
+//        if (!newsArticleList.isEmpty()) {
+//            Log.d("Outputs", "Setting recycler view");
+//            recyclerView.setAdapter(new NewsAdapter(this, newsArticleList));
+//            recyclerView.setHasFixedSize(true);
+//        }
+
+        // Call to rooms database to populate the recycler view!
+        populateRecyclerView();
+
+    }
+
+    /**
+     * Populate recycler view by querying to the database to retrieving articles
+     */
+    private void populateRecyclerView() {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+            final List<NewsArticle> articles = db.articleDao().getArticles();
+
+            // Run on the UI thread rather than main thread
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        recyclerView.setAdapter(new NewsAdapter(MainActivity.this, articles));
+                        recyclerView.setHasFixedSize(true);
+                    }
+                });
+            }
+        });
     }
 
     @Override
     public void onLoaderReset(@NonNull Loader<String> loader) {
+
+    }
+
+    /**
+     * Handles filtering of titles specified by the user
+     * @param view button
+     */
+    public void handleFilter(View view) {
+            AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                @Override
+                public void run() {
+                    String title = filter_et.getText().toString();
+                    final List<NewsArticle> articles = db.articleDao().loadArticleByTitle(title);
+                    // Run on the UI thread rather than main thread
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            recyclerView.setAdapter(new NewsAdapter(MainActivity.this, articles));
+                            recyclerView.setHasFixedSize(true);
+                        }
+                    });
+                }
+            });
 
     }
 }
