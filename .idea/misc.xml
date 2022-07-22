@@ -5,6 +5,8 @@
       <map>
         <entry key="..\:/Users/959033/AndroidStudioProjects/NewsAPI/app/src/main/res/drawable/dialog_layout.xml" value="0.1515625" />
         <entry key="..\:/Users/959033/AndroidStudioProjects/NewsAPI/app/src/main/res/layout-land/activity_main.xml" value="0.1" />
+        <entry key="..\:/Users/959033/AndroidStudioProjects/NewsAPI/app/src/main/res/layout-sw600dp-land/activity_main.xml" value="0.229296875" />
+        <entry key="..\:/Users/959033/AndroidStudioProjects/NewsAPI/app/src/main/res/layout-sw600dp-port/activity_main.xml" value="0.190625" />
         <entry key="..\:/Users/959033/AndroidStudioProjects/NewsAPI/app/src/main/res/layout-w600dp-land/activity_main.xml" value="0.390625" />
         <entry key="..\:/Users/959033/AndroidStudioProjects/NewsAPI/app/src/main/res/layout-w600dp/activity_main.xml" value="0.390625" />
         <entry key="..\:/Users/959033/AndroidStudioProjects/NewsAPI/app/src/main/res/layout/activity_main.xml" value="0.1" />

@@ -35,7 +35,7 @@ public interface NewsArticleDao {
     void deleteArticleById(int id);
 
     /**
-     * This is a super neat way of finding a title that *contains* a certain string
+     * This is a super neat way of finding a title that *contains** a certain string
      * the LIKE key word will find a match and the '%' means contains rather than match
      * by a specific string.
      * @param title
